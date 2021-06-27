@@ -19,7 +19,7 @@ namespace Tests
             Assert.AreEqual(config.Trigger, "-");
             Assert.AreEqual(config.Blacklist, new string[] { "wally" });
             Assert.AreEqual(config.RoomBlacklist, new string[] { "lobby", "ignoredroom" });
-
+            Assert.AreEqual(config.DefaultRoom, "franais");
         }
     }
 }

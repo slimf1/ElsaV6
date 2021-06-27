@@ -18,7 +18,6 @@ namespace ElsaV6
     {
         private const int MAX_MESSAGE_LENGTH = 100000;
         private static readonly TimeSpan SAME_MESSAGE_COOLDOWN = new TimeSpan(0, 0, 2);
-        private static readonly Logger LOGGER = new Logger();
 
         private IClient _client;
         private Config _config;
@@ -30,7 +29,7 @@ namespace ElsaV6
         private IDictionary<string, Command> _commands;
         private IDictionary<string, Room> _rooms;
 
-        public Config Config { get; }
+        public Config Config => _config;
 
         public Bot(IClient client, Config config)
         {
@@ -43,12 +42,14 @@ namespace ElsaV6
 
             _client.ReconnectTimeout = new TimeSpan(0, 0, 20);
 
-            LOGGER.Enabled = _config.Log;
+            Logger.Enabled = _config.Log;
             LoadCommands();
         }
 
-        private void LoadCommands()
+        public void LoadCommands()
         {
+            _commands.Clear();
+
             var commandTypes = Assembly
                 .GetExecutingAssembly()
                 .GetTypes()
@@ -74,14 +75,14 @@ namespace ElsaV6
         public async Task Say(string room, string message)
         {
             var now = DateTime.Now;
-            if (_lastMessage.Equals(message) && now - _lastMessageTime < SAME_MESSAGE_COOLDOWN) ;
-                //return;
+            if (_lastMessage.Equals(message) && now - _lastMessageTime < SAME_MESSAGE_COOLDOWN)
+                return;
 
             if (message.Length > MAX_MESSAGE_LENGTH)
                 return;
 
             await _client.Send($"{room}|{message}");
-            LOGGER.Message($"[S] ({room}) {message}");
+            Logger.Message($"[S] ({room}) {message}");
 
             _lastMessage = message;
             _lastMessageTime = now;
@@ -121,7 +122,7 @@ namespace ElsaV6
 
         private void LoadRoom(string message, string roomID)
         {
-            LOGGER.Debug($"Loading room {roomID}...");
+            Logger.Debug($"Loading room {roomID}...");
             var parts = message.Split('\n');
             var roomTitle = parts[2].Split('|')[2];
             var users = parts[3].Split('|')[2].Split(',').Skip(1).ToArray();
@@ -129,7 +130,7 @@ namespace ElsaV6
             var room = new Room(roomTitle, roomID);
             room.InitializeUsers(users);
             _rooms[roomID] = room;
-            LOGGER.Debug($"{roomID} : Done");
+            Logger.Debug($"{roomID} : Done");
         }
 
         private async Task ParseMessage(string line, string room)
@@ -138,11 +139,11 @@ namespace ElsaV6
             if (parts.Length < 2) return;
             if (string.IsNullOrEmpty(room))
             {
-                LOGGER.Debug("Room set to current :" + _currentRoom);
+                Logger.Debug("Room set to current :" + _currentRoom);
                 room = _currentRoom;
             }
 
-            LOGGER.Message($"({room}) {line}");
+            Logger.Message($"({room}) {line}");
 
             switch(parts[1])
             {
@@ -157,7 +158,7 @@ namespace ElsaV6
                     await ChatMessage(parts[4], parts[3], room, parts[2]);
                     break;
                 default:
-                    LOGGER.Debug($"Unsupported message type: {parts[1]}");
+                    Logger.Debug($"Unsupported message type: {parts[1]}");
                     break;
             }
         }
@@ -193,7 +194,7 @@ namespace ElsaV6
                 } 
                 catch(Exception e)
                 {
-                    LOGGER.Error(e.Message);
+                    Logger.Error(e.Message);
                 }
             }
 
@@ -204,7 +205,7 @@ namespace ElsaV6
             var name = parts[2].Substring(1);
             if (name.Equals(_config.Name))
             {
-                LOGGER.Info($"Connection sucessful as {name} ");
+                Logger.Info($"Connection sucessful as {name} ");
                 foreach(var room in _config.Rooms)
                 {
                     await _client.Send($"|/join {room}");

@@ -28,5 +28,6 @@ namespace ElsaV6
         public string Trigger { get; set; }
         public string[] Blacklist { get; set; }
         public string[] RoomBlacklist { get; set; }
+        public string DefaultRoom { get; set; }
     }
 }

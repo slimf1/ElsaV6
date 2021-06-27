@@ -8,6 +8,13 @@ namespace ElsaV6.Contexts
 {
     class RoomContext : Context
     {
+        private IDictionary<char, int> RANKS = new Dictionary<char, int>
+        {
+            ['&'] = 6, ['#'] = 5, ['*'] = 4,
+            ['@'] = 3, ['%'] = 2, ['+'] = 1,
+            [' '] = 0
+        };
+
         private Room _room;
 
         public RoomContext(Bot bot, string target, User sender, string command, Room room)
@@ -20,7 +27,8 @@ namespace ElsaV6.Contexts
 
         public override bool HasRank(char requiredRank)
         {
-            return true; // TODO !!
+            return Bot.Config.Whitelist.Contains(Sender.UserID)
+                || RANKS[Sender.Rank] >= RANKS[requiredRank];
         }
 
         public override bool IsPM()

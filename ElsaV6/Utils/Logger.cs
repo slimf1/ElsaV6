@@ -4,16 +4,10 @@ namespace ElsaV6.Utils
 {
     public class Logger
     {
-        public bool Timestamp { get; set; }
-        public bool Enabled { get; set; }
+        public static bool Timestamp { get; set; } = true;
+        public static bool Enabled { get; set; } = true;
 
-        public Logger()
-        {
-            Timestamp = true;
-            Enabled = true;
-        }
-
-        private void ColoredLog(string message, ConsoleColor color)
+        private static void ColoredLog(string message, ConsoleColor color)
         {
             if (!Enabled) return;
             Console.ForegroundColor = color;
@@ -21,22 +15,22 @@ namespace ElsaV6.Utils
             Console.ResetColor();
         }
 
-        public void Info(string message)
+        public static void Info(string message)
         {
             ColoredLog(message, ConsoleColor.Blue);
         }
 
-        public void Message(string message)
+        public static void Message(string message)
         {
             ColoredLog(message, ConsoleColor.White);
         }
 
-        public void Error(string message)
+        public static void Error(string message)
         {
             ColoredLog(message, ConsoleColor.Red);
         }
 
-        public void Debug(string message)
+        public static void Debug(string message)
         {
             ColoredLog(message, ConsoleColor.Yellow);
         }

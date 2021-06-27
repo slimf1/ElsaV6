@@ -4,9 +4,10 @@
   "Name": "TestBot",
   "Password": "password123",
   "Log": true,
-  "Rooms": ["botdevelopment", "overused"],
+  "Rooms": [ "botdevelopment", "overused" ],
   "Whitelist": [ "panur" ],
   "Trigger": "-",
   "Blacklist": [ "wally" ],
-  "RoomBlacklist": ["lobby", "ignoredroom"]
+  "RoomBlacklist": [ "lobby", "ignoredroom" ],
+  "DefaultRoom": "franais"
 }
