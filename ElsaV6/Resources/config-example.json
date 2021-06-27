@@ -8,5 +8,6 @@
   "Whitelist": ["user"],
   "Trigger": "-",
   "Blacklist": [],
-  "RoomBlacklist": []
+  "RoomBlacklist": [],
+  "DefaultRoom": ""
 }

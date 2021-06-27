@@ -23,13 +23,9 @@ namespace ElsaV6.Contexts
         }
 
         public abstract bool IsPM();
-
         public abstract bool HasRank(char requiredRank);
-
         public abstract Task Reply(string message);
-
         public abstract Task SendHtml(string html);
-
         public abstract Task SendUHtml(string id, string html, bool changes);
     }
 }

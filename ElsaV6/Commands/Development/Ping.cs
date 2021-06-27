@@ -13,7 +13,7 @@ namespace ElsaV6.Commands.Development
             Name = "ping";
             AllowedInPM = true;
             RequiredRank = ' ';
-            Aliases = new string[] { "test" };
+            Aliases = new string[] { "pingalias" };
         }
 
         public override async Task Run(Context context)

@@ -13,6 +13,8 @@ namespace ElsaV6
         {
             _rank = userName[0];
             _userName = userName.Substring(1);
+
+            UserID = Utils.Text.ToLowerAlphaNum(_userName);
         }
 
         public string UserID { get; }
