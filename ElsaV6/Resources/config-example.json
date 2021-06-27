@@ -1,0 +1,12 @@
+{
+  "Host": "sim3.psim.us",
+  "Port": 80,
+  "Name": "TestBot",
+  "Password": "password123",
+  "Log": true,
+  "Rooms": ["botdevelopment"],
+  "Whitelist": ["user"],
+  "Trigger": "-",
+  "Blacklist": [],
+  "RoomBlacklist": []
+}

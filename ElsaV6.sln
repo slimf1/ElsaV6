@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30503.244
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElsaV6", "ElsaV6\ElsaV6.csproj", "{4FFB50EB-0977-4DD3-934B-E7633434B80F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{2F0DF07B-6A12-4284-AB95-0CFE960B2AC8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4FFB50EB-0977-4DD3-934B-E7633434B80F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FFB50EB-0977-4DD3-934B-E7633434B80F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FFB50EB-0977-4DD3-934B-E7633434B80F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FFB50EB-0977-4DD3-934B-E7633434B80F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F0DF07B-6A12-4284-AB95-0CFE960B2AC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F0DF07B-6A12-4284-AB95-0CFE960B2AC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F0DF07B-6A12-4284-AB95-0CFE960B2AC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F0DF07B-6A12-4284-AB95-0CFE960B2AC8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B51E4F6D-F562-462B-9683-712200E89417}
+	EndGlobalSection
+EndGlobal
