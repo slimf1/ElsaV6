@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ElsaV6
 {
-    class User
+    public class User
     {
         private string _userName;
 

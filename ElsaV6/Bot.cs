@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
 using ElsaV6.Contexts;
+using System.IO;
 
 namespace ElsaV6
 {
@@ -43,18 +44,26 @@ namespace ElsaV6
             _client.ReconnectTimeout = new TimeSpan(0, 0, 20);
 
             Logger.Enabled = _config.Log;
-            LoadCommands();
+            LoadCommandsFromAssembly(Assembly.GetExecutingAssembly());
+            // Loads the commands in ElsaV6.dll
+            LoadCommandsFromAssembly(FindCommandsAssembly());
+            // Loads the commands in Commands.dll
         }
 
-        public void LoadCommands()
+        private static Assembly FindCommandsAssembly()
         {
-            _commands.Clear();
+            var baseDir = new DirectoryInfo(Environment.CurrentDirectory);
+            var commandsProjectDirPath = Path.Combine(baseDir.FullName, "..", "..", "..", "..", "Commands");
+            string[] dllFiles = Directory.GetFiles(commandsProjectDirPath, "*.dll", SearchOption.AllDirectories);
+            var commandDllFilePath = dllFiles.FirstOrDefault(f => f.EndsWith("Commands.dll"));
+            var commandDllFile = new FileInfo(commandDllFilePath);
+            return commandDllFilePath != null ? Assembly.LoadFile(commandDllFile.FullName) : null;
+        }
 
-            var commandTypes = Assembly
-                .GetExecutingAssembly()
-                .GetTypes()
-                .Where(t => t.IsSubclassOf(typeof(Command)));
-
+        public void LoadCommandsFromAssembly(Assembly assembly)
+        {
+            var commandTypes = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Command)));
+            
             foreach(var commandType in commandTypes)
             {
                 var commandInstance = (Command)Activator.CreateInstance(commandType);

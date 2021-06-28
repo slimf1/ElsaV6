@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ElsaV6
 {
-    abstract class Command
+    public abstract class Command
     {
         public string Name { get; protected set; } = "";
         public string[] Aliases { get; protected set; } = { };

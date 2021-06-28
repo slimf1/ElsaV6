@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ElsaV6.Contexts
 {
-    abstract class Context
+    public abstract class Context
     {
         public Bot Bot { get; }
         public string Target { get; }

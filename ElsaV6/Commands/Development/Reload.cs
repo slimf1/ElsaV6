@@ -22,7 +22,7 @@ namespace ElsaV6.Commands.Development
             {
                 // Recompiler les DLL et les recharger ?
                 // Une DLL par plugin ?
-                context.Bot.LoadCommands();
+                //context.Bot.LoadCommandsFromAssembly();
                 await context.Reply("Commandes rechargées");
             } 
             catch(Exception e)
