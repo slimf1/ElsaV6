@@ -13,6 +13,7 @@ namespace ElsaV6.Contexts
         public string Command { get; }
 
         public abstract string RoomID { get; }
+        public abstract bool IsPM { get; }
 
         public Context(Bot bot, string target, User sender, string command)
         {
@@ -22,10 +23,9 @@ namespace ElsaV6.Contexts
             Command = command;
         }
 
-        public abstract bool IsPM();
         public abstract bool HasRank(char requiredRank);
         public abstract Task Reply(string message);
-        public abstract Task SendHtml(string html);
+        public abstract Task SendHtml(string html, string room = null);
         public abstract Task SendUHtml(string id, string html, bool changes);
     }
 }

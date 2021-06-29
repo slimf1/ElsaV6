@@ -24,8 +24,11 @@ namespace Tests
         {
             await _bot.Say("room1", "test");
             await _bot.Say("room1", "test");
+            await _bot.Say("room1", "test");
             await _bot.Say("room2", "test");
-            Assert.AreEqual(_mockClient.Messages.Count, 1);
+            await _bot.Say("room2", "test");
+            await _bot.Say("room3", "test");
+            Assert.AreEqual(_mockClient.Messages.Count, 3);
         }
 
         [Test]

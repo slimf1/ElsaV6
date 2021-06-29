@@ -25,9 +25,9 @@ namespace ElsaV6
 
         public async Task Call(Context context)
         {
-            if (PMOnly && !context.IsPM())
+            if (PMOnly && !context.IsPM)
                 return;
-            if (context.IsPM() && !(AllowedInPM || PMOnly))
+            if (context.IsPM && !(AllowedInPM || PMOnly))
                 return;
             if (WLOnly && !context.Bot.Config.Whitelist.Contains(context.Sender.UserID))
                 return;

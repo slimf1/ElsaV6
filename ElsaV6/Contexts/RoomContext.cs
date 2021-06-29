@@ -25,15 +25,12 @@ namespace ElsaV6.Contexts
 
         public override string RoomID => _room.RoomID;
 
+        public override bool IsPM => false;
+
         public override bool HasRank(char requiredRank)
         {
             return Bot.Config.Whitelist.Contains(Sender.UserID)
                 || RANKS[Sender.Rank] >= RANKS[requiredRank];
-        }
-
-        public override bool IsPM()
-        {
-            return false;
         }
 
         public override async Task Reply(string message)
@@ -41,14 +38,15 @@ namespace ElsaV6.Contexts
             await Bot.Say(RoomID, message);
         }
 
-        public override Task SendHtml(string html)
+        public override async Task SendHtml(string html, string room = null)
         {
-            throw new NotImplementedException();
+            await Bot.Say(RoomID, $"/addhtmlbox {html}");
         }
 
-        public override Task SendUHtml(string id, string html, bool changes)
+        public override async Task SendUHtml(string id, string html, bool changes)
         {
-            throw new NotImplementedException();
+            var command = changes ? "changeuhtml" : "adduhtml";
+            await Bot.Say(RoomID, $"/{command} {id}, {html}");
         }
     }
 }

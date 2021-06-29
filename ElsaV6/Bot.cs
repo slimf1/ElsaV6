@@ -21,8 +21,6 @@ namespace ElsaV6
         private static readonly TimeSpan SAME_MESSAGE_COOLDOWN = new TimeSpan(0, 0, 2);
 
         private IClient _client;
-        private Config _config;
-
         private DateTime? _lastMessageTime;
         private string _lastMessage;
         private string _currentRoom;
@@ -30,12 +28,12 @@ namespace ElsaV6
         private IDictionary<string, Command> _commands;
         private IDictionary<string, Room> _rooms;
 
-        public Config Config => _config;
+        public Config Config { get; }
 
         public Bot(IClient client, Config config)
         {
+            Config = config;
             _client = client;
-            _config = config;
             _lastMessage = "";
             _lastMessageTime = null;
             _commands = new Dictionary<string, Command>();
@@ -43,7 +41,7 @@ namespace ElsaV6
 
             _client.ReconnectTimeout = new TimeSpan(0, 0, 20);
 
-            Logger.Enabled = _config.Log;
+            Logger.Enabled = Config.Log;
             LoadCommandsFromAssembly(Assembly.GetExecutingAssembly());
             // Loads the commands in ElsaV6.dll
             LoadCommandsFromAssembly(FindCommandsAssembly());
@@ -83,15 +81,23 @@ namespace ElsaV6
 
         public async Task Say(string room, string message)
         {
+            await Send($"{room}|{message}");
+        }
+
+        public async Task Send(string message)
+        {
             var now = DateTime.Now;
-            if (_lastMessage.Equals(message) && now - _lastMessageTime < SAME_MESSAGE_COOLDOWN)
+            if (_lastMessage != null 
+                && _lastMessageTime != null 
+                && _lastMessage.Equals(message) 
+                && now - _lastMessageTime < SAME_MESSAGE_COOLDOWN)
                 return;
 
             if (message.Length > MAX_MESSAGE_LENGTH)
                 return;
 
-            await _client.Send($"{room}|{message}");
-            Logger.Message($"[S] ({room}) {message}");
+            await _client.Send(message);
+            Logger.Message($"[S] {message}");
 
             _lastMessage = message;
             _lastMessageTime = now;
@@ -174,8 +180,8 @@ namespace ElsaV6
 
         private async Task ChatMessage(string message, string senderName, string roomName, string timestampVal)
         {
-            int triggerLength = _config.Trigger.Length;
-            if (!message.Substring(0, triggerLength).Equals(_config.Trigger))
+            int triggerLength = Config.Trigger.Length;
+            if (!message.Substring(0, triggerLength).Equals(Config.Trigger))
                 return;
 
             var text = message.Substring(triggerLength);
@@ -212,12 +218,12 @@ namespace ElsaV6
         private async Task CheckConnection(string[] parts)
         {
             var name = parts[2].Substring(1);
-            if (name.Equals(_config.Name))
+            if (name.Equals(Config.Name))
             {
                 Logger.Info($"Connection sucessful as {name} ");
-                foreach(var room in _config.Rooms)
+                foreach(var room in Config.Rooms)
                 {
-                    await _client.Send($"|/join {room}");
+                    await Send($"|/join {room}");
                     await Task.Delay(300);
                 }
             }
@@ -229,14 +235,14 @@ namespace ElsaV6
             var parameters = new Dictionary<string, string>
             {
                 ["act"] = "login",
-                ["name"] = _config.Name,
-                ["pass"] = _config.Password,
+                ["name"] = Config.Name,
+                ["pass"] = Config.Password,
                 ["challstr"] = challstr
             };
             var textResponse = await Http.PostAsync(url, parameters);
             JObject jsonResponse = (JObject)JsonConvert.DeserializeObject(textResponse.Substring(1));
             var nonce = jsonResponse.GetValue("assertion");
-            await _client.Send($"|/trn {_config.Name},0,{nonce}");
+            await Send($"|/trn {Config.Name},0,{nonce}");
         }
 
         protected virtual void Dispose(bool disposing)

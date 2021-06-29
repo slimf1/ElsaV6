@@ -11,8 +11,8 @@ namespace ElsaV6
         public Room(string roomName, string roomID = null)
         {
             _roomName = roomName;
+            
             Users = new Dictionary<string, User>();
-
             RoomID = string.IsNullOrEmpty(roomID)
                 ? Utils.Text.ToLowerAlphaNum(roomName)
                 : roomID;
@@ -58,7 +58,7 @@ namespace ElsaV6
         public void RenameUser(string oldName, string newName)
         {
             LeaveUser(oldName);
-            LeaveUser(newName);
+            JoinUser(newName);
         }
 
         public void UpdateUserOntime(string userID)

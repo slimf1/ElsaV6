@@ -15,29 +15,29 @@ namespace ElsaV6.Contexts
 
         public override string RoomID => Bot.Config.DefaultRoom;
 
+        public override bool IsPM => true;
+
         public override bool HasRank(char requiredRank)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
-        public override bool IsPM()
+        public override async Task Reply(string message)
         {
-            throw new NotImplementedException();
+            await Bot.Send($"|/pm {Sender.UserID}, {message}");
         }
 
-        public override Task Reply(string message)
+        public override async Task SendHtml(string html, string room = null)
         {
-            throw new NotImplementedException();
+            await Bot.Say(room != null ? room : Bot.Config.DefaultRoom,
+                $"/pminfobox {Sender.UserID}, {html}");
         }
 
-        public override Task SendHtml(string html)
+        public override async Task SendUHtml(string id, string html, bool changes)
         {
-            throw new NotImplementedException();
-        }
-
-        public override Task SendUHtml(string id, string html, bool changes)
-        {
-            throw new NotImplementedException();
+            var command = changes ? "pmchangeuhtml" : "pmuhtml";
+            await Bot.Say(Bot.Config.DefaultRoom,
+                $"/{command} {Sender.UserID}, {id}, {html}");
         }
     }
 }
