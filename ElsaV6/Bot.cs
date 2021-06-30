@@ -27,6 +27,7 @@ namespace ElsaV6
         private bool _disposedValue;
         private IDictionary<string, Command> _commands;
         private IDictionary<string, Room> _rooms;
+        private IDictionary<string, Reader> _readers;
 
         public Config Config { get; }
 
@@ -38,6 +39,7 @@ namespace ElsaV6
             _lastMessageTime = null;
             _commands = new Dictionary<string, Command>();
             _rooms = new Dictionary<string, Room>();
+            _readers = new Dictionary<string, Reader>();
 
             _client.ReconnectTimeout = new TimeSpan(0, 0, 20);
 
@@ -60,16 +62,23 @@ namespace ElsaV6
 
         public void LoadCommandsFromAssembly(Assembly assembly)
         {
-            var commandTypes = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Command)));
+            var commandsTypes = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Command)));
+            var readersTypes = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Reader)));
             
-            foreach(var commandType in commandTypes)
+            foreach(var commandType in commandsTypes)
             {
                 var commandInstance = (Command)Activator.CreateInstance(commandType);
-                _commands.Add(commandInstance.Name, commandInstance);
+                _commands[commandInstance.Name] = commandInstance;
                 foreach(var alias in commandInstance.Aliases)
                 {
-                    _commands.Add(alias, commandInstance);
+                    _commands[alias] = commandInstance;
                 }
+            }
+
+            foreach(var readerType in readersTypes)
+            {
+                var readerInstance = (Reader)Activator.CreateInstance(readerType);
+                _readers[readerType.FullName] = readerInstance;
             }
         }
 
@@ -87,9 +96,9 @@ namespace ElsaV6
         public async Task Send(string message)
         {
             var now = DateTime.Now;
-            if (_lastMessage != null 
-                && _lastMessageTime != null 
-                && _lastMessage.Equals(message) 
+            if (_lastMessage != null
+                && _lastMessageTime != null
+                && _lastMessage.Equals(message)
                 && now - _lastMessageTime < SAME_MESSAGE_COOLDOWN)
                 return;
 
@@ -156,6 +165,18 @@ namespace ElsaV6
             {
                 Logger.Debug("Room set to current :" + _currentRoom);
                 room = _currentRoom;
+            }
+
+            foreach(var reader in _readers.Values)
+            {
+                try
+                {
+                    reader.Read(this, parts, _rooms[room]);
+                }
+                catch(Exception e)
+                {
+                    Logger.Error($"Parser crashed: {e.Message}");
+                }
             }
 
             Logger.Message($"({room}) {line}");

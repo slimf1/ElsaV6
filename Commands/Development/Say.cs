@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Commands
+namespace Commands.Development
 {
     public class Say : ElsaV6.Command
     {
