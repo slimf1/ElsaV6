@@ -29,6 +29,7 @@ namespace ElsaV6
         private IDictionary<string, Command> _commands;
         private IDictionary<string, Room> _rooms;
         private IDictionary<string, Reader> _readers;
+        private IDictionary<string, User> _pmSenders;
 
         public Config Config { get; }
 
@@ -42,6 +43,7 @@ namespace ElsaV6
             _commands = new Dictionary<string, Command>();
             _rooms = new Dictionary<string, Room>();
             _readers = new Dictionary<string, Reader>();
+            _pmSenders = new Dictionary<string, User>();
 
             _client.ReconnectTimeout = new TimeSpan(0, 0, 20);
 
@@ -201,8 +203,11 @@ namespace ElsaV6
                 case "L":
                     _rooms[room].LeaveUser(parts[2]);
                     break;
-                case "pm":
+                case "N":
                     _rooms[room].RenameUser(parts[3], parts[2]);
+                    break;
+                case "pm":
+                    await PrivateMessage(parts[4], parts[2]);
                     break;
                 case "formats":
                     GetFormats(line);
@@ -210,6 +215,47 @@ namespace ElsaV6
                 default:
                     Logger.Debug($"Unsupported message type: {parts[1]}");
                     break;
+            }
+        }
+
+        private async Task PrivateMessage(string message, string senderName)
+        {
+            var sender = new User(senderName);
+            if (Config.Blacklist.Contains(sender.UserID))
+                return;
+
+            _pmSenders[sender.UserID] = sender;
+
+            // TODO: virer la dupli de code avec ChatMessage
+            int triggerLength = Config.Trigger.Length;
+            if (!message.Substring(0, triggerLength).Equals(Config.Trigger))
+                return;
+
+            var text = message.Substring(triggerLength);
+            int spaceIndex = text.IndexOf(' ');
+            var command = spaceIndex > 0
+                ? text.Substring(0, spaceIndex).ToLower()
+                : text.Trim().ToLower();
+
+            if (string.IsNullOrEmpty(Text.ToLowerAlphaNum(command)))
+                return;
+
+            var target = spaceIndex > 0
+                ? text.Substring(spaceIndex + 1)
+                : "";
+
+            var context = new PMContext(this, target, sender, command);
+
+            if (_commands.ContainsKey(command))
+            {
+                try
+                {
+                    await _commands[command].Call(context);
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e.Message);
+                }
             }
         }
 
@@ -257,7 +303,6 @@ namespace ElsaV6
                     Logger.Error(e.Message);
                 }
             }
-
         }
 
         private async Task CheckConnection(string[] parts)

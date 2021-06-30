@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Management.Automation;
 using System.Text;
 
 namespace ElsaV6.Utils
@@ -11,15 +12,12 @@ namespace ElsaV6.Utils
         public static string Command(string command)
         {
 #if _WINDOWS
-            var shell = System
-                .Management
-                .Automation
-                .PowerShell
-                .Create(System.Management.Automation.RunspaceMode.NewRunspace)
-                .AddScript(command)
-                .Invoke();
+            var shellResult = PowerShell
+                                .Create(RunspaceMode.NewRunspace)
+                                .AddScript(command)
+                                .Invoke();
 
-            return shell.FirstOrDefault()?.ToString();
+            return string.Join("\n", shellResult);
 #else
             var escapedArgs = command.Replace("\"", "\\\"");
             var process = new Process()
