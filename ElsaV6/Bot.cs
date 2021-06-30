@@ -25,6 +25,7 @@ namespace ElsaV6
         private string _lastMessage;
         private string _currentRoom;
         private bool _disposedValue;
+        private string[] _formats;
         private IDictionary<string, Command> _commands;
         private IDictionary<string, Room> _rooms;
         private IDictionary<string, Reader> _readers;
@@ -37,6 +38,7 @@ namespace ElsaV6
             _client = client;
             _lastMessage = "";
             _lastMessageTime = null;
+            _formats = new string[] { };
             _commands = new Dictionary<string, Command>();
             _rooms = new Dictionary<string, Room>();
             _readers = new Dictionary<string, Reader>();
@@ -193,10 +195,32 @@ namespace ElsaV6
                 case "c:":
                     await ChatMessage(parts[4], parts[3], room, parts[2]);
                     break;
+                case "J":
+                    _rooms[room].JoinUser(parts[2]);
+                    break;
+                case "L":
+                    _rooms[room].LeaveUser(parts[2]);
+                    break;
+                case "pm":
+                    _rooms[room].RenameUser(parts[3], parts[2]);
+                    break;
+                case "formats":
+                    GetFormats(line);
+                    break;
                 default:
                     Logger.Debug($"Unsupported message type: {parts[1]}");
                     break;
             }
+        }
+
+        private void GetFormats(string line)
+        {
+            var formats = line.Split("|").Skip(5).ToArray();
+
+            _formats = formats
+                .Where(f => f.StartsWith("[Gen"))
+                .Select(f => f.Split(",")[0])
+                .ToArray();
         }
 
         private async Task ChatMessage(string message, string senderName, string roomName, string timestampVal)
