@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ElsaV6.Contexts
 {
-    class PMContext : Context
+    public class PMContext : Context
     {
         public PMContext(Bot bot, string target, User sender, string command)
             : base(bot, target, sender, command)

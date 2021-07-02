@@ -61,7 +61,10 @@ namespace ElsaV6
             string[] dllFiles = Directory.GetFiles(commandsProjectDirPath, "*.dll", SearchOption.AllDirectories);
             var commandDllFilePath = dllFiles.FirstOrDefault(f => f.EndsWith("Commands.dll"));
             var commandDllFile = new FileInfo(commandDllFilePath);
-            return commandDllFilePath != null ? Assembly.LoadFile(commandDllFile.FullName) : null;
+            if (commandDllFile == null)
+                return null;
+            else
+                return AppDomain.CurrentDomain.Load(Assembly.LoadFrom(commandDllFile.FullName).GetName());
         }
 
         public void LoadCommandsFromAssembly(Assembly assembly)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElsaV6.Contexts
 {
-    class RoomContext : Context
+    public class RoomContext : Context
     {
         private IDictionary<char, int> RANKS = new Dictionary<char, int>
         {

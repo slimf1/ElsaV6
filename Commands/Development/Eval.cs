@@ -7,7 +7,9 @@ using Microsoft.CodeAnalysis.CSharp.Scripting;
 
 namespace Commands.Development
 {
-    class Eval : ElsaV6.Command
+    
+
+    public class Eval : ElsaV6.Command
     {
         public Eval()
         {
@@ -15,19 +17,22 @@ namespace Commands.Development
             WLOnly = true;
             AllowedInPM = true;
         }
+        class Globals
+        {
+            public Context context;
+        }
 
         public override async Task Run(Context context)
         {
             try
             {
-                // Eg System.Math.Pow(2, 4)
-                var result = await CSharpScript.EvaluateAsync(context.Target);
+                var globals = new Globals { context = context };
+                var result = await CSharpScript.EvaluateAsync(context.Target, globals: globals);
                 await context.Reply(result?.ToString());
             } catch(Exception e)
             {
                 await context.Reply("Error: " + e.Message);
             }
-
         }
     }
 }
