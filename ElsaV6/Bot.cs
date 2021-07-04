@@ -12,6 +12,8 @@ using Newtonsoft.Json.Linq;
 using System.Reflection;
 using ElsaV6.Contexts;
 using System.IO;
+using DataAccess.Repository.User;
+using DataAccess.Repository;
 
 namespace ElsaV6
 {
@@ -32,10 +34,12 @@ namespace ElsaV6
         private IDictionary<string, User> _pmSenders;
 
         public Config Config { get; }
+        public IBotRepository BotRepository { get; }
 
-        public Bot(IClient client, Config config)
+        public Bot(IClient client, Config config, IBotRepository botRepository)
         {
             Config = config;
+            BotRepository = botRepository;
             _client = client;
             _lastMessage = "";
             _lastMessageTime = null;
@@ -63,8 +67,9 @@ namespace ElsaV6
             var commandDllFile = new FileInfo(commandDllFilePath);
             if (commandDllFile == null)
                 return null;
-            else
-                return AppDomain.CurrentDomain.Load(Assembly.LoadFrom(commandDllFile.FullName).GetName());
+            
+
+            return AppDomain.CurrentDomain.Load(Assembly.LoadFrom(commandDllFile.FullName).GetName());
         }
 
         public void LoadCommandsFromAssembly(Assembly assembly)
@@ -90,7 +95,7 @@ namespace ElsaV6
         }
 
         public Bot(Config config) 
-            : this(new Client(new Uri($"ws://{config.Host}:{config.Port}/showdown/websocket")), config)
+            : this(new Client(new Uri($"ws://{config.Host}:{config.Port}/showdown/websocket")), config, new BotRepository())
         {
 
         }
@@ -344,25 +349,22 @@ namespace ElsaV6
             {
                 if (disposing)
                 {
-                    // TODO: supprimer l'état managé (objets managés)
                 }
 
+                BotRepository.Dispose();
                 _client.Dispose();
                 _client = null;
                 _disposedValue = true;
             }
         }
 
-        // // TODO: substituer le finaliseur uniquement si 'Dispose(bool disposing)' a du code pour libérer les ressources non managées
-        // ~Bot()
-        // {
-        //     // Ne changez pas ce code. Placez le code de nettoyage dans la méthode 'Dispose(bool disposing)'
-        //     Dispose(disposing: false);
-        // }
+        ~Bot()
+        {
+            Dispose(disposing: false);
+        }
 
         public void Dispose()
         {
-            // Ne changez pas ce code. Placez le code de nettoyage dans la méthode 'Dispose(bool disposing)'
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }

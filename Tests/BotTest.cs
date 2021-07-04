@@ -15,7 +15,7 @@ namespace Tests
         public async Task Setup()
         {
             _mockClient = new MockClient();
-            _bot = new Bot(_mockClient, new Config { Host = "", Log = true, Name = "", Password = "", Port = 0 });
+            _bot = new Bot(_mockClient, new Config { Host = "", Log = true, Name = "", Password = "", Port = 0 }, null);
             await _bot.Start();
         }
 
