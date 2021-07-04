@@ -9,16 +9,23 @@ namespace Tests.Mocks
     {
         public IList<string> Messages { get; }
         private bool _connected;
+        private MessageObservable _messageObservable;
 
         public MockClient()
         {
             Messages = new List<string>();
+            _messageObservable = new MessageObservable();
             _connected = false;
         }
 
         public TimeSpan? ReconnectTimeout { get; set; }
 
-        public IObservable<string> MessageReceived { get; }
+        public IObservable<string> MessageReceived => _messageObservable;
+
+        public void ReceiveMessage(string message)
+        {
+            _messageObservable.Send(message);
+        }
 
         public void Dispose()
         {
@@ -36,6 +43,21 @@ namespace Tests.Mocks
         {
             _connected = true;
             return Task.FromResult<object>(null);
+        }
+    }
+
+    class MessageObservable : IObservable<string>
+    {
+        private IObserver<string> _observer;
+        public IDisposable Subscribe(IObserver<string> observer)
+        {
+            _observer = observer;
+            return null;
+        }
+
+        public void Send(string message)
+        {
+            _observer?.OnNext(message);
         }
     }
 }
