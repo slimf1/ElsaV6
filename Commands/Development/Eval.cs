@@ -7,8 +7,6 @@ using Microsoft.CodeAnalysis.CSharp.Scripting;
 
 namespace Commands.Development
 {
-    
-
     public class Eval : ElsaV6.Command
     {
         public Eval()
@@ -28,7 +26,7 @@ namespace Commands.Development
             {
                 var globals = new Globals { context = context };
                 var result = await CSharpScript.EvaluateAsync(context.Target, globals: globals);
-                await context.Reply(result?.ToString());
+                await context.Reply(result.ToString());
             } catch(Exception e)
             {
                 await context.Reply("Error: " + e.Message);
