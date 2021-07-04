@@ -17,7 +17,7 @@ namespace Commands.Profile
 
         public override async Task Run(Context context)
         {
-
+            await context.Reply($"/w {context.Sender.UserID}, wip");
         }
     }
 }

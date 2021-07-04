@@ -24,16 +24,18 @@ namespace Tests.Mocks
         {
         }
 
-        public async Task Send(string message)
+        public Task Send(string message)
         {
             if (!_connected)
                 throw new Exception("Cannot send while not connected");
             Messages.Add(message);
+            return Task.FromResult<object>(null);
         }
 
-        public async Task Start()
+        public Task Start()
         {
             _connected = true;
+            return Task.FromResult<object>(null);
         }
     }
 }

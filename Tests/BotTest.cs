@@ -9,13 +9,15 @@ namespace Tests
     public class BotTest
     {
         MockClient _mockClient;
+        MockBotRepository _mockRepository;
         Bot _bot;
 
         [SetUp]
         public async Task Setup()
         {
             _mockClient = new MockClient();
-            _bot = new Bot(_mockClient, new Config { Host = "", Log = true, Name = "", Password = "", Port = 0 }, null);
+            _mockRepository = new MockBotRepository();
+            _bot = new Bot(_mockClient, new Config { Host = "", Log = true, Name = "", Password = "", Port = 0 }, _mockRepository);
             await _bot.Start();
         }
 
