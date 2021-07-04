@@ -1,6 +1,8 @@
 ﻿using ElsaV6;
 using NUnit.Framework;
+using System;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Tests.Mocks;
 
@@ -36,10 +38,10 @@ namespace Tests
             await _bot.Start();
 
             // Initialize the bot with one room
-            _mockClient.ReceiveMessage(">franais\n" +
+            _mockClient.ReceiveMessage(">testroom\n" +
                 "|init|chat\n" +
-                "|title|Français|\n" +
-                "|users|4,*TestUser1,@Panur, TestUser2,#TestUser3");
+                "|title|Test Room|\n" +
+                "|users|4,*BotUser,@Panur, RegularUser,#RoomOwner");
         }
 
         [Test]
@@ -52,6 +54,10 @@ namespace Tests
             await _bot.Say("room2", "test");
             await _bot.Say("room3", "test");
             Assert.AreEqual(_mockClient.Messages.Count, 3);
+            Thread.Sleep(5000);
+            await _bot.Say("room1", "test");
+            await _bot.Say("room1", "test");
+            Assert.AreEqual(_mockClient.Messages.Count, 4);
         }
 
         [Test]
@@ -67,8 +73,23 @@ namespace Tests
         [Test]
         public void TestSayCommand()
         {
-            _mockClient.ReceiveMessage(">franais\n|c:|1625422909|@Panur|-say test");
-            Assert.AreEqual(_mockClient.Messages[0], "franais|test");
+            _mockClient.ReceiveMessage(">testroom\n|c:|1| RegularUser|-say test");
+            Assert.AreEqual(_mockClient.Messages.Count, 0);
+            _mockClient.ReceiveMessage(">testroom\n|c:|1|#RoomOwner|-say test");
+            Assert.AreEqual(_mockClient.Messages.Count, 0);
+            _mockClient.ReceiveMessage(">testroom\n|c:|1|@Panur|-say test");
+            Assert.AreEqual(_mockClient.Messages[0], "testroom|test");
+        }
+
+        [Test]
+        public void TestHasRank()
+        {
+            _mockClient.ReceiveMessage(">testroom\n|c:|1| RegularUser|-profile");
+            Assert.AreEqual(_mockClient.Messages.Count, 0);
+            _mockClient.ReceiveMessage(">testroom\n|c:|1|#RoomOwner|-profile");
+            Assert.AreEqual(_mockClient.Messages.Count, 1);
+            _mockClient.ReceiveMessage(">testroom\n|c:|1|@Panur|-profile");
+            Assert.AreEqual(_mockClient.Messages.Count, 2);
         }
 
         [TearDown]
