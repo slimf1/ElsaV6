@@ -53,23 +53,6 @@ namespace ElsaV6
 
             Logger.Enabled = Config.Log;
             LoadCommandsFromAssembly(Assembly.GetExecutingAssembly());
-            // Loads the commands in ElsaV6.dll
-            LoadCommandsFromAssembly(FindCommandsAssembly());
-            // Loads the commands in Commands.dll
-        }
-
-        private static Assembly FindCommandsAssembly()
-        {
-            var baseDir = new DirectoryInfo(Environment.CurrentDirectory);
-            var commandsProjectDirPath = Path.Combine(baseDir.FullName, "..", "..", "..", "..", "Commands");
-            string[] dllFiles = Directory.GetFiles(commandsProjectDirPath, "*.dll", SearchOption.AllDirectories);
-            var commandDllFilePath = dllFiles.FirstOrDefault(f => f.EndsWith("Commands.dll"));
-            var commandDllFile = new FileInfo(commandDllFilePath);
-            if (commandDllFile == null)
-                return null;
-            
-
-            return AppDomain.CurrentDomain.Load(Assembly.LoadFrom(commandDllFile.FullName).GetName());
         }
 
         public void LoadCommandsFromAssembly(Assembly assembly)
