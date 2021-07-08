@@ -8,6 +8,11 @@ namespace ElsaV6
 {
     public class Config
     {
+        public Config()
+        {
+            Keys = new Dictionary<string, string>();
+        }
+
         public static Config LoadFromFile(string path)
         {
             Config config = null;
@@ -29,5 +34,6 @@ namespace ElsaV6
         public string[] Blacklist { get; set; }
         public string[] RoomBlacklist { get; set; }
         public string DefaultRoom { get; set; }
+        public IDictionary<string, string> Keys { get; set; }
     }
 }

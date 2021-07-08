@@ -16,7 +16,7 @@ namespace ElsaV6.Commands.Development
             AllowedInPM = true;
         }
 
-        class Globals
+        public class Globals
         {
             public Context context;
         }
@@ -27,7 +27,10 @@ namespace ElsaV6.Commands.Development
             {
                 var globals = new Globals { context = context };
                 var result = await CSharpScript.EvaluateAsync(context.Target, globals: globals);
-                await context.Reply(result.ToString());
+                if (result != null)
+                {
+                    await context.Reply(result.ToString());
+                }
             }
             catch (Exception e)
             {

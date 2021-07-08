@@ -20,6 +20,10 @@ namespace Tests
             Assert.AreEqual(config.Blacklist, new string[] { "wally" });
             Assert.AreEqual(config.RoomBlacklist, new string[] { "lobby", "ignoredroom" });
             Assert.AreEqual(config.DefaultRoom, "franais");
+            Assert.IsTrue(config.Keys.ContainsKey("key1"));
+            Assert.IsTrue(config.Keys.ContainsKey("key2"));
+            Assert.AreEqual(config.Keys["key1"], "value1");
+            Assert.AreEqual(config.Keys["key2"], "value2");
         }
     }
 }

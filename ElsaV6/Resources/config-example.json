@@ -9,5 +9,8 @@
   "Trigger": "-",
   "Blacklist": [],
   "RoomBlacklist": [],
-  "DefaultRoom": ""
+  "DefaultRoom": "",
+  "Keys": {
+    "key": "value"
+  }
 }

@@ -9,5 +9,9 @@
   "Trigger": "-",
   "Blacklist": [ "wally" ],
   "RoomBlacklist": [ "lobby", "ignoredroom" ],
-  "DefaultRoom": "franais"
+  "DefaultRoom": "franais",
+  "Keys": {
+    "key1": "value1",
+    "key2": "value2"
+  }
 }
