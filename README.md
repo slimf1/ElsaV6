@@ -17,7 +17,7 @@ Work in progress !
 1. Install the `dotnet` package [(Installation docs)](https://docs.microsoft.com/en-us/dotnet/core/install/)
 2. Rename `config-example.json` in the `ElsaV6/Resource` folder to `config.json` and fill in the relevant fields
 3. Run `dotnet build`
-4. Move to the `bin` folder and run the `ElsaV6` executable
+4. Run `dotnet run`
 
 ## Configuration
 
